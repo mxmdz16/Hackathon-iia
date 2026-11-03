@@ -1,9 +1,6 @@
-# <Código> · <Título de su problemática>
-
-> **Hackatón IIA · UADE · 3.4.257.** Este README es la plantilla del grupo. En su fork, reemplacen todo lo que está entre `< >` y borren esta nota. Las bases están en `BASES.md` y su ficha en `problematicas/`.
-
-**Integrantes:** <nombre y apellido> · <nombre y apellido>
-**IA declarada:** <la del grupo desde la Clase 1>
+# M29 · ¿Le va a gustar esta recomendación?
+**Integrantes:** Santiago Cagiao · Maximo Diaz
+**IA declarada:** Gemini
 **Pista:** <Neurona / Reglas / Agente>
 **Publicación en LinkedIn:** <link>
 
@@ -15,7 +12,7 @@
 
 | PEAS | Su sistema |
 |---|---|
-| Medida de rendimiento | <cómo se sabe si decidió bien> |
+| Medida de rendimiento | Porcentaje de acierto/precisión en la predicción del «pulgar arriba» (tasa de recomendaciones aceptadas sobre el total de mostradas) y maximización del engagement (tiempo de escucha tras el «pulgar arriba»). |
 | Entorno | <dónde y con qué decide> |
 | Actuadores | <qué hace con la decisión> |
 | Sensores | <qué datos recibe> |
