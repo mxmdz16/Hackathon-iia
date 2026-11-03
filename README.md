@@ -13,7 +13,7 @@
 | PEAS | Su sistema |
 |---|---|
 | Medida de rendimiento | Porcentaje de acierto/precisión en la predicción del «pulgar arriba» (tasa de recomendaciones aceptadas sobre el total de mostradas) y maximización del engagement (tiempo de escucha tras el «pulgar arriba»). |
-| Entorno | <dónde y con qué decide> |
+| Entorno | <dónde y con qué decide> | hgcghc
 | Actuadores | <qué hace con la decisión> |
 | Sensores | <qué datos recibe> |
 
