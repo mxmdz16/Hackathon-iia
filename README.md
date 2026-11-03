@@ -17,7 +17,7 @@
 | Actuadores | Módulo de despliegue en la interfaz que renderiza la lista ordenada de álbumes recomendados, genera y muestra las etiquetas de explicabilidad (*"Porque escuchaste X"*) y actualiza la cola de reproducción del usuario. |
 | Sensores | Registro de eventos del usuario (interacciones de «pulgar arriba/abajo», clics, reproducciones completadas, saltos de canciones) y la API de metadatos (puntuaciones de factores latentes SVD, duración del álbum, género, año de lanzamiento). |
 
-**Objetivo y métrica.** La coincidencia exacta de atributos (Attribute Match Score), Como metrica utilizamos el $\text{Match Score} = \frac{\text{Numero de restricciones cumplidas}}{\text{Numero de restricciones aplicadas}}$. La metrica del sistema es el promedio del match score en todas las recomendaciones generadas. El objetivo es que $\hat{x}(\text{Match Score}) >= 0.90$
+**Objetivo y métrica.** La coincidencia exacta de atributos (Attribute Match Score), Como metrica utilizamos el $\text{Match Score} = \frac{\text{Numero de restricciones cumplidas}}{\text{Numero de restricciones aplicadas}}$. La metrica del sistema es el promedio del match score en todas las recomendaciones generadas. El objetivo es que $\hat{x}(\text{Match Score}) >= 0.90$. Para que la métrica lo mida directamente, la predicción del modelo (SÍ) debe coincidir con el comportamiento real del usuario (pulgar arriba / escucha efectiva). Si el usuario interactúa positivamente, la métrica sube; si lo ignora o le da pulgar abajo, se convierte en un error (Falso Positivo) que castiga el rendimiento del sistema.
 
 ## 2. El sistema
 * Variable 1: Coincidencia con su historial ($H$) $\rightarrow$ Escala de $0.0$ a $1.0$ (SVD / Factorización).Alta: $H \ge 0.70$Media: $0.40 \le H < 0.70$Baja: $H < 0.40$
