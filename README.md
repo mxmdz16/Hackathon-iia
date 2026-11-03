@@ -128,4 +128,4 @@ Para mitigar los Falsos Positivos, implementamos una arquitectura híbrida:
 
 | Corrida | Nota | Agujero que encontró | Qué cambiamos |
 |---|---|---|---|
-| 1 | <> | <> | <> |
+| 1 | 6 | Agujero principal: ¿Qué tiene que pasarle al usuario para que la recomendación funcione, y tu métrica lo mide directamente? Otros: Calculá la especificidad de prueba con tu matriz: ¿cuántos negativos reales hay y cuántos VN tenés? Tu sección 5 dice 75 % en entrenamiento y tu tabla dice 57,14 %. ¿Cuál es la correcta, y de dónde sale el 6 y 6? | Para que la métrica lo mida directamente, la predicción del modelo (SÍ) debe coincidir con el comportamiento real del usuario (pulgar arriba / escucha efectiva). Si el usuario interactúa positivamente, la métrica sube; si lo ignora o le da pulgar abajo, se convierte en un error (Falso Positivo) que castiga el rendimiento del sistema. |
