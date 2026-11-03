@@ -17,7 +17,7 @@
 | Actuadores | Módulo de despliegue en la interfaz que renderiza la lista ordenada de álbumes recomendados, genera y muestra las etiquetas de explicabilidad (*"Porque escuchaste X"*) y actualiza la cola de reproducción del usuario. |
 | Sensores | Registro de eventos del usuario (interacciones de «pulgar arriba/abajo», clics, reproducciones completadas, saltos de canciones) y la API de metadatos (puntuaciones de factores latentes SVD, duración del álbum, género, año de lanzamiento). |
 
-**Objetivo y métrica.** La coincidencia exacta de atributos (Attribute Match Score), Como metrica utilizamos el $\text{Match Score} = \frac{\text{Numero de restricciones cumplidas}}{\text{Numero de restricciones aplicadas}}$. La metrica del sistema es el promedi9o del match score en todas las recomendaciones generadas. El objetivo es que $\hat{x} >= 90%$
+**Objetivo y métrica.** La coincidencia exacta de atributos (Attribute Match Score), Como metrica utilizamos el $\text{Match Score} = \frac{\text{Numero de restricciones cumplidas}}{\text{Numero de restricciones aplicadas}}$. La metrica del sistema es el promedio del match score en todas las recomendaciones generadas. El objetivo es que $\hat{x}(\text{Match Score}) >= 0.90$
 
 ## 2. El sistema
 
