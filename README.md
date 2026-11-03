@@ -77,7 +77,7 @@ Existe una discrepancia notable provocada por el desbalance de clases en el conj
 
 No se observa sobreajuste (*overfitting*) en el sentido tradicional (ya que las métricas de entrenamiento tampoco eran hiper-altas)[cite: 3], sino una **falta de generalización hacia la clase positiva** debido a un umbral/sesgo conservador y un conjunto de prueba donde predominaban los casos negativos (5 de 6)[cite: 3]. El modelo aprendió a rechazar álbumes con alta Especificidad (83.33%)[cite: 3], pero perdió la capacidad de detectar los «pulgares arriba» reales[cite: 3].
 
-#4. El error mas caro
+## 4. El error mas caro
 
 En nuestro problema de recomendación, el **Falso Positivo (FP)** es el error más caro. 
 
