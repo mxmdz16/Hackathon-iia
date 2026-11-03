@@ -134,3 +134,13 @@ Para mitigar los Falsos Positivos, implementamos una arquitectura híbrida:
 | Corrida | Nota | Agujero que encontró | Qué cambiamos |
 |---|---|---|---|
 | 1 | 6 | Agujero principal: ¿Qué tiene que pasarle al usuario para que la recomendación funcione, y tu métrica lo mide directamente? Otros: Calculá la especificidad de prueba con tu matriz: ¿cuántos negativos reales hay y cuántos VN tenés? Tu sección 5 dice 75 % en entrenamiento y tu tabla dice 57,14 %. ¿Cuál es la correcta, y de dónde sale el 6 y 6? | Para que la métrica lo mida directamente, la predicción del modelo (SÍ) debe coincidir con el comportamiento real del usuario (pulgar arriba / escucha efectiva). Si el usuario interactúa positivamente, la métrica sube; si lo ignora o le da pulgar abajo, se convierte en un error (Falso Positivo) que castiga el rendimiento del sistema. |
+| 2 | 6 | Agujero principal: Tu objetivo sigue siendo Match Score ≥ 0,90. Si el sistema llega a 0,90 y el usuario no da pulgar arriba, ¿qué se cumplió?
+Otros:
+
+• ¿Cuántos negativos reales hay en prueba y cuántos VN tenés? Calculá la especificidad con esos números.
+• Tu sección 5 dice 6 positivos y 6 negativos, y 75 % de exactitud. ¿De dónde sale, si tu matriz de entrenamiento dice otra cosa? | **Objetivo y métrica.** Para evaluar el rendimiento del recomendador, la métrica principal del sistema es la tasa de acierto directo (*Accuracy / Precision@1*), definida como el porcentaje de recomendaciones mostradas en las que el usuario efectúa una interacción positiva («pulgar arriba» o tiempo de escucha efectivo). 
+
+El **objetivo cuantitativo** del sistema es alcanzar una tasa de aciertos $\ge 0.90$ (90% de recomendaciones aceptadas).
+
+Complementariamente, se evalúa el cumplimiento de restricciones del usuario mediante el $\text{Match Score} = \frac{\text{Número de restricciones cumplidas}}{\text{Número de restricciones aplicadas}}$. Un $\text{Match Score} \ge 0.90$ garantiza el criterio sintáctico (coincidencia de atributos y metadatos), pero el éxito real del agente depende de la validación semántica (la respuesta positiva efectiva del usuario en la interfaz). Si la recomendación cumple con las restricciones sintácticas ($\text{Match Score} \ge 0.90$) pero el usuario le da «pulgar abajo» o la ignora, el caso se contabiliza como un **Falso Positivo (FP)**, penalizando la métrica de rendimiento del sistema por falta de afinidad real. |
+
