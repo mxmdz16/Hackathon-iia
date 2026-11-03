@@ -21,7 +21,27 @@
 
 ## 2. El sistema
 
-**Cómo decide.** <Neurona: pesos y sesgo. Reglas: la lista de reglas si‑entonces. Agente: la regla con la que elige la acción.>
+**Cómo decide.**A. Hechos Iniciales (Sensores / Filtros del Usuario)
+• 𝐹1: Usuario_Genero_Deseado = "Synthwave" 
+• 𝐹2: Usuario_Duracion_Max = 40 (minutos)
+• 𝐹3: Usuario_Epoca_Deseada = "80s"
+• 𝐹4: Album_Evaluado = "Endless Summer - The Midnight" 
+• 𝐹5: Album_Genero = "Synthwave"
+• 𝐹6: Album_Duracion = 38
+• 𝐹7: Album_Año = 2016 (Época actual, no 80s) 
+• 𝐹8: Album_Popularidad = "Alta" 
+
+B. Reglas de Inferencia (9 Reglas en Total)
+
+• Regla 1 (Evaluación de Género): IF Album_Genero == Usuario_Genero_Deseado THEN Coincide_Genero = True
+• Regla 2 (Evaluación de Duración): IF Album_Duracion <= Usuario_Duracion_Max THEN Coincide_Duracion = True 
+• Regla 3 (Evaluación de Época): IF Album_Año >= 1980 AND Album_Año <= 1989 AND Usuario_Epoca_Deseada == "80s" THEN Coincide_Epoca = True 
+• Regla 4 (Cálculo de Match Score Base / Categorización Parcial): IF Coincide_Genero == True AND Coincide_Duracion == True AND NOT Coincide_Epoca THEN Match_Score_Base = 0.67 AND Categoria = "Recomendacion_Parcial" 
+• Regla 5 (Ajuste/Bonificación por Popularidad): IF Match_Score_Base >= 0.60 AND Album_Popularidad == "Alta" THEN Match_Score_Final = 0.75
+• Regla 6 (Filtro de Inclusión al Feed): IF Match_Score_Final >= 0.60 THEN Estado_Album = "Apto_Para_Mostrar" 
+• Regla 7 (Priorización de Posición en Interfaz Web): IF Estado_Album == "Apto_Para_Mostrar" AND Match_Score_Final >= 0.70 THEN Posicion_Feed = "Top_Resultados" 
+• Regla 8 (Asignación de Etiqueta/Badge de Destacado): IF Posicion_Feed == "Top_Resultados" AND Album_Popularidad == "Alta" THEN Etiqueta_UI = "Destacado_Popular" 
+• Regla 9 (Generación de Explicabilidad - Actuador): IF Posicion_Feed == "Top_Resultados" AND Coincide_Genero == True AND Coincide_Duracion == True THEN Mensaje_Explicabilidad = "Te recomendamos este álbum porque dura menos de 40 min y pertenece al género Synthwave." 
 
 **Variables que usa y por qué.** <Cuáles usa, cuáles descarta y por qué.>
 
