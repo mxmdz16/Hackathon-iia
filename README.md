@@ -13,11 +13,11 @@
 | PEAS | Su sistema |
 |---|---|
 | Medida de rendimiento | Porcentaje de acierto/precisión en la predicción del «pulgar arriba» (tasa de recomendaciones aceptadas sobre el total de mostradas) y maximización del engagement (tiempo de escucha tras el «pulgar arriba»). |
-| Entorno | <dónde y con qué decide> | hgcghc
-| Actuadores | <qué hace con la decisión> |
-| Sensores | <qué datos recibe> |
+| Entorno | La plataforma de streaming de música en tiempo real (interfaz de usuario/feed diario), el catálogo de álbumes disponible con sus metadatos, y el comportamiento histórico y dinámico de los usuarios. |
+| Actuadores | Módulo de despliegue en la interfaz que renderiza la lista ordenada de álbumes recomendados, genera y muestra las etiquetas de explicabilidad (*"Porque escuchaste X"*) y actualiza la cola de reproducción del usuario. |
+| Sensores | Registro de eventos del usuario (interacciones de «pulgar arriba/abajo», clics, reproducciones completadas, saltos de canciones) y la API de metadatos (puntuaciones de factores latentes SVD, duración del álbum, género, año de lanzamiento). |
 
-**Objetivo y métrica.** <Qué es lo que de verdad importa en su problema y con qué métrica lo van a medir. ¿Son lo mismo?>
+**Objetivo y métrica.** La coincidencia exacta de atributos (Attribute Match Score), Como metrica utilizamos el $Match Score = \frac{Numero de restricciones cumplidas}{Numero de restricciones aplicadas}$
 
 ## 2. El sistema
 
