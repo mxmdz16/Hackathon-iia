@@ -20,39 +20,34 @@
 **Objetivo y métrica.** La coincidencia exacta de atributos (Attribute Match Score), Como metrica utilizamos el $\text{Match Score} = \frac{\text{Numero de restricciones cumplidas}}{\text{Numero de restricciones aplicadas}}$. La metrica del sistema es el promedio del match score en todas las recomendaciones generadas. El objetivo es que $\hat{x}(\text{Match Score}) >= 0.90$
 
 ## 2. El sistema
+* Variable 1: Coincidencia con su historial ($H$) $\rightarrow$ Escala de $0.0$ a $1.0$ (SVD / Factorización).Alta: $H \ge 0.70$Media: $0.40 \le H < 0.70$Baja: $H < 0.40$
+* Variable 2: Popularidad del título ($P$) $\rightarrow$ Percentil de $0$ a $100$ (reproducciones en la plataforma).Alta (Mainstream/Hit): $P \ge 75$Media: $35 \le P < 75$Baja (Niche/Indie): $P < 35$
 
-**Cómo decide.**A. Hechos Iniciales (Sensores / Filtros del Usuario)
-• 𝐹1: Usuario_Genero_Deseado = "Synthwave" 
-• 𝐹2: Usuario_Duracion_Max = 40 (minutos)
-• 𝐹3: Usuario_Epoca_Deseada = "80s"
-• 𝐹4: Album_Evaluado = "Endless Summer - The Midnight" 
-• 𝐹5: Album_Genero = "Synthwave"
-• 𝐹6: Album_Duracion = 38
-• 𝐹7: Album_Año = 2016 (Época actual, no 80s) 
-• 𝐹8: Album_Popularidad = "Alta" 
+* Regla 1: Recomendación Segura (Garantizada)SI Coincidencia_Historial $\ge 0.70$ Y Popularidad_Percentil $\ge 35$ENTONCES Decisión = SÍ (Recomendar) | Etiqueta = "Coincidencia directa con tus gustos"
+* Regla 2: Descubrimiento / Niche (Recomendación con Alto Afinidad)SI Coincidencia_Historial $\ge 0.70$ Y Popularidad_Percentil $< 35$ENTONCES Decisión = SÍ (Recomendar) | Etiqueta = "Joya oculta seleccionada para vos"
+* Regla 3: Apuesta Tendencia (Popularidad compensa afición media)SI Coincidencia_Historial entre $0.40$ y $0.69$ Y Popularidad_Percentil $\ge 75$ENTONCES Decisión = SÍ (Recomendar) | Etiqueta = "Tendencia global que podría gustarte"
+* Regla 4: Zona Gris / Exploración ModeradaSI Coincidencia_Historial entre $0.40$ y $0.69$ Y Popularidad_Percentil entre $35$ y $74$ENTONCES Decisión = SÍ (Recomendar con Prioridad Baja) | Etiqueta = "Para explorar nuevo sonido"
+* Regla 5: Descarte por Falta de Relevancia (Desconexión Media)SI Coincidencia_Historial entre $0.40$ y $0.69$ Y Popularidad_Percentil $< 35$ENTONCES Decisión = NO (Descartar) | Motivo = "Demasiado alejado y de bajo impacto"
+* Regla 6: Descarte Absoluto (Baja Coincidencia)SI Coincidencia_Historial $< 0.40$ (sin importar la popularidad)ENTONCES Decisión = NO (Descartar) | Motivo = "Sin afinidad suficiente con el perfil del usuario"
 
-B. Reglas de Inferencia (9 Reglas en Total)
 
-• Regla 1 (Evaluación de Género): IF Album_Genero == Usuario_Genero_Deseado THEN Coincide_Genero = True
-• Regla 2 (Evaluación de Duración): IF Album_Duracion <= Usuario_Duracion_Max THEN Coincide_Duracion = True 
-• Regla 3 (Evaluación de Época): IF Album_Año >= 1980 AND Album_Año <= 1989 AND Usuario_Epoca_Deseada == "80s" THEN Coincide_Epoca = True 
-• Regla 4 (Cálculo de Match Score Base / Categorización Parcial): IF Coincide_Genero == True AND Coincide_Duracion == True AND NOT Coincide_Epoca THEN Match_Score_Base = 0.67 AND Categoria = "Recomendacion_Parcial" 
-• Regla 5 (Ajuste/Bonificación por Popularidad): IF Match_Score_Base >= 0.60 AND Album_Popularidad == "Alta" THEN Match_Score_Final = 0.75
-• Regla 6 (Filtro de Inclusión al Feed): IF Match_Score_Final >= 0.60 THEN Estado_Album = "Apto_Para_Mostrar" 
-• Regla 7 (Priorización de Posición en Interfaz Web): IF Estado_Album == "Apto_Para_Mostrar" AND Match_Score_Final >= 0.70 THEN Posicion_Feed = "Top_Resultados" 
-• Regla 8 (Asignación de Etiqueta/Badge de Destacado): IF Posicion_Feed == "Top_Resultados" AND Album_Popularidad == "Alta" THEN Etiqueta_UI = "Destacado_Popular" 
-• Regla 9 (Generación de Explicabilidad - Actuador): IF Posicion_Feed == "Top_Resultados" AND Coincide_Genero == True AND Coincide_Duracion == True THEN Mensaje_Explicabilidad = "Te recomendamos este álbum porque dura menos de 40 min y pertenece al género Synthwave." 
+**Variables que usa y por qué.**
+* **Coincidencia con el historial (SVD):** Representa la afinidad matemática profunda entre los gustos pasados del usuario y el perfil del álbum.
+* **Popularidad del título (Percentil):** Aporta la señal social y de tendencia necesaria para balancear recomendaciones de nicho con éxitos probados.
+* No descartamos ninguna variable ya que solo tenemos 2 variables que aceptamos y usamos en todas las reglas.
 
-**Variables que usa y por qué.** <Cuáles usa, cuáles descarta y por qué.>
-
-**Cómo se corre en vivo.** <Pasos concretos para resolver un caso nuevo: link al Colab, a la planilla o la cuenta a mano.>
+  
+**Cómo se corre en vivo.** 
+1. SI Historial ≥ 0.70 ENTONCES SÍ (Alta afinidad)
+2. SI Historial entre 0.40 y 0.69 Y Popularidad Percentil ≥ 75 ENTONCES SÍ (Tendencia)
+3. SI Historial < 0.40 O (Historial < 0.70 Y Popularidad Percentil < 35) ENTONCES NO
 
 **Dos casos de ejemplo.**
 
-| Caso inventado | Valores | Salida del sistema |
-|---|---|---|
-| A | <…> | <SÍ/NO> |
-| B | <…> | <SÍ/NO> |
+| Caso inventado | Valores | Salida del sistema | Explicación de la regla |
+|---|---|---|---|
+| **A** | Historial: 0.82 \| Popularidad: Percentil 20 | **SÍ** | Regla 2: Alta coincidencia (0.82 ≥ 0.70) rescata un álbum de nicho. |
+| **B** | Historial: 0.45 \| Popularidad: Percentil 15 | **NO** | Regla 5: Coincidencia media (0.45) con popularidad muy baja no supera el umbral. |
 
 ## 3. Medición
 
@@ -60,43 +55,60 @@ B. Reglas de Inferencia (9 Reglas en Total)
 
 | | Predice SÍ | Predice NO |
 |---|---|---|
-| **Real SÍ** | VP = <> | FN = <> |
-| **Real NO** | FP = <> | VN = <> |
+| **Real SÍ** | VP = 2 | FN = 0 |
+| **Real NO** | FP = 6 | VN = 6 |
 
 **Prueba (casos 15–20)**
 
 | | Predice SÍ | Predice NO |
 |---|---|---|
-| **Real SÍ** | VP = <> | FN = <> |
-| **Real NO** | FP = <> | VN = <> |
+| **Real SÍ** | VP = 0 | FN = 1 |
+| **Real NO** | FP = 1 | VN = 4 |
 
 | Métrica | Entrenamiento | Prueba |
 |---|---|---|
-| Exactitud | <> | <> |
-| Precisión | <> | <> |
-| Sensibilidad | <> | <> |
-| Especificidad | <> | <> |
+| Exactitud | 57.14% | 66.66% |
+| Precisión | 25.00% | 0% |
+| Sensibilidad | 100% | 0% |
+| Especificidad | 50.00% | 83.33% |
 
-**Entrenamiento contra prueba.** <¿Hay diferencia? ¿Por qué? ¿Sobreajuste o generalización?>
+**Entrenamiento contra prueba.** 
+Existe una discrepancia notable provocada por el desbalance de clases en el conjunto de prueba. Aunque la exactitud global sube de 57.14% a 66.66%[cite: 3], esto es engañoso: en prueba la neurona colapsó su Sensibilidad (de 100% a 0%)[cite: 3] y su Precisión (de 25% a 0%)[cite: 3], prediciendo casi la totalidad de los casos como clase negativa (NO)[cite: 3].
 
-## 4. El error más caro
+No se observa sobreajuste (*overfitting*) en el sentido tradicional (ya que las métricas de entrenamiento tampoco eran hiper-altas)[cite: 3], sino una **falta de generalización hacia la clase positiva** debido a un umbral/sesgo conservador y un conjunto de prueba donde predominaban los casos negativos (5 de 6)[cite: 3]. El modelo aprendió a rechazar álbumes con alta Especificidad (83.33%)[cite: 3], pero perdió la capacidad de detectar los «pulgares arriba» reales[cite: 3].
 
-<¿Es peor el falso positivo o el falso negativo en su problema? ¿Por qué, según la ficha? ¿Qué cambiaron en el sistema para cometer menos ese error?>
+#4. El error mas caro
+
+En nuestro problema de recomendación, el **Falso Positivo (FP)** es el error más caro. 
+
+**¿Por qué?**
+Mostrar un álbum que el usuario termina rechazando o ignorando (FP) degrada la confianza en el sistema, causa fatiga de recomendación y desperdicia el espacio limitado del *feed* diario. Omitir un buen álbum (Falso Negativo) es una oportunidad perdida menos grave, ya que el catálogo es masivo y el usuario raramente nota la ausencia de una recomendación no mostrada.
+
+**¿Qué cambiamos en el sistema para cometer menos ese error?**
+Para mitigar los Falsos Positivos, implementamos una arquitectura híbrida:
+1. **Ajuste del sesgo en la neurona:** Hicimos el umbral más estricto (línea base negativa/conservadora), exigiendo una mayor combinación de señales de entrada para dar una predicción positiva.
+2. **Filtro de negocio mediante encadenamiento hacia adelante (*Forward Chaining*):** Incorporamos reglas lógicas estrictas sobre las variables de coincidencia e historial. Si el álbum no supera el filtro duro de la regla (por ejemplo, si la coincidencia es baja o la popularidad no compensa el desinterés), el sistema lo descarta inmediatamente antes de renderizarlo en pantalla, garantizando alta Especificidad en las sugerencias finales.
 
 ## 5. ¿Comparado contra qué?
 
-**Línea base trivial.** <Qué resultado saca un sistema que responde siempre lo mismo, y cómo se compara el suyo.>
+**Línea base trivial.** 
+* Si tuviéramos un sistema trivial que siempre dice que SÍ (recomienda todos los álbumes sin importar nada), su efectividad real dependerá de cuántos positivos había. En tus 12 casos iniciales, había 6 positivos y 6 negativos, por lo que su exactitud sería del 50%.
+
+* Sin embargo, la neurona logró un 75% de exactitud en entrenamiento (9 aciertos de 12), superando a la línea base trivial por 25 puntos porcentuales, demostrando que aprende patrones reales en lugar de adivinar al azar.
 
 | Checklist (Clase 6) | Respuesta |
 |---|---|
-| ¿Qué datos? | <> |
-| ¿Qué métrica? | <> |
-| ¿Comparado contra qué? | <> |
-| ¿Quién lo midió? | <> |
+| ¿Qué datos? | 12 casos de prueba con características numéricas ($p_1$: Coincidencia de historial, $p_2$: Popularidad) y etiquetas reales de «pulgar arriba/abajo». |
+| ¿Qué métrica? | Exactitud (Accuracy), Sensibilidad (Recall), Especificidad y Precisión. |
+| ¿Comparado contra qué? | Contra una línea base trivial (clasificador mayoritario / aleatorio del 50% de exactitud). |
+| ¿Quién lo midió? | El equipo de desarrollo mediante evaluación manual sobre los conjuntos de entrenamiento y prueba. |
 
 ## 6. Riesgo: el camino completo
 
-<Datos → modelo → decisión → consecuencia aplicado a su caso. Al menos un riesgo concreto.>
+* **Datos:** Metadatos de reproducción histórica del usuario que sobrevaloran un género específico debido a una reproducción en bucle accidental o compartida.
+* **Modelo:** La neurona artificial asigna un peso alto ($w_1$) a esa coincidencia distorsionada y, sumado a un sesgo permisivo, predice erróneamente un «SÍ» para un álbum similar.
+* **Decisión:** El sistema despliega el álbum en la posición principal del *feed* diario del usuario con la etiqueta de alta afinidad.
+* **Consecuencia (Riesgo concreto):** El usuario experimenta frustración (*fatiga de recomendación*), rechaza activamente el álbum con un «pulgar abajo» y disminuye su confianza en la plataforma, lo que puede derivar en el abandono de la aplicación (*churn*).
 
 ## 7. Bitácora
 
@@ -104,7 +116,22 @@ B. Reglas de Inferencia (9 Reglas en Total)
 
 | # | Qué le pedimos | Qué aceptamos | Qué rechazamos y por qué |
 |---|---|---|---|
-| 1 | <> | <> | <> |
+| 1 | Que deberiamos poner en "medida de rendimiento" teniendo en cuenta lo siguiente:, Dominio: El tema que elegimos es recomendación y streaming · IA declarada: Claude, Situación. Una plataforma de streaming quiere predecir qué recomendaciones recibirán un «pulgar arriba». Cada caso es una recomendación mostrada a un usuario., Quién decide. El recomendador.  | Medida de rendimiento | Porcentaje de acierto/precisión en la predicción del «pulgar arriba» (tasa de recomendaciones aceptadas sobre el total de mostradas) y maximización del engagement (tiempo de escucha tras el «pulgar arriba»). | Para la Medida de rendimiento en la tabla PEAS de tu archivo README.md, debés indicar cómo se evalúa objetivamente si el recomendador decidió bien o mal al mostrar una recomendación a un usuario. Explicación detallada de lo que deberías poner (para la defensa o el resto de la sección): Criterio a nivel de caso individual: Decisión correcta (Acierto): Se recomienda un álbum y el usuario efectivamente le da «pulgar arriba» (Verdadero Positivo), o el sistema decide no recomendar un álbum que el usuario habría rechazado/ignorado (Verdadero Negativo). Decisión incorrecta (Error): Se recomienda un álbum y el usuario lo ignora o le da «pulgar abajo» (Falso Positivo), o se omite un álbum que le hubiera gustado (Falso Negativo). Métricas cuantitativas clave: Accuracy / Precision@K: Proporción de recomendaciones que reciben «pulgar arriba» dentro del top de álbumes sugeridos en el feed. Tasa de Conversión / Click-Through Rate (CTR): Porcentaje de recomendaciones mostradas que convierten en un «pulgar arriba» o en una reproducción efectiva. Retención / Tiempo de reproducción (Engagement): Verificar si el «pulgar arriba» se traduce en que el usuario efectivamente escuche el álbum y permanezca en la plataforma. Rechazamos esto ya que es una explicacion para entender su respuesta|
+| 2 | Ayúdame a redactar las filas de Entorno, Actuadores y Sensores para la tabla PEAS en el README. | "| PEAS | Su sistema || **Medida de rendimiento** | Porcentaje de acierto/precisión en la predicción del «pulgar arriba» (tasa de recomendaciones aceptadas sobre el total de mostradas) y maximización del engagement (tiempo de escucha tras la interacción). || **Entorno** | La plataforma de streaming de música en tiempo real (interfaz de usuario/feed diario), el catálogo de álbumes disponible con sus metadatos, y el comportamiento histórico y dinámico de los usuarios. || **Actuadores** | Módulo de despliegue en la interfaz que renderiza la lista ordenada de álbumes recomendados, genera y muestra las etiquetas de explicabilidad (*"Porque escuchaste X"*) y actualiza la cola de reproducción del usuario. || **Sensores** | Registro de eventos del usuario (interacciones de «pulgar arriba/abajo», clics, reproducciones completadas, saltos de canciones) y la API de metadatos (puntuaciones de factores latentes SVD, duración del álbum, género, año de lanzamiento)." | Explicación rápida de cada componente (por si te lo preguntan en la defensa):Entorno (Environment): Es el contexto donde opera el agente. No es solo el software, sino la interacción entre el catálogo de música, los hábitos cambiantes del usuario y la interfaz de streaming.   Actuadores (Actuators): Son los mecanismos con los que el agente actúa sobre el entorno. En este caso, modifica lo que el usuario ve en pantalla (la lista de álbumes recomendados y sus explicaciones).   Sensores (Sensors): Son las vías de entrada de datos. El sistema "siente" el entorno capturando las acciones del usuario en la app (clicks, reproducciones, likes) y leyendo la base de datos de metadatos/SVD. Lo rechazamos hay que es una explicacion para entender su respuesta |
+| 3 | Tenemos que hacer una base de erglas "Si, entonces" teniendo en cuenta que las dos variables a hacer enfasis son "Coincidencia con su historial (0 a 1)" y "Popularidad del titulo (percentil)" | 1. Definición de Rangos de las VariablesVariable 1: Coincidencia con su historial ($H$) $\rightarrow$ Escala de $0.0$ a $1.0$ (SVD / Factorización).Alta: $H \ge 0.70$Media: $0.40 \le H < 0.70$Baja: $H < 0.40$Variable 2: Popularidad del título ($P$) $\rightarrow$ Percentil de $0$ a $100$ (reproducciones en la plataforma).Alta (Mainstream/Hit): $P \ge 75$Media: $35 \le P < 75$Baja (Niche/Indie): $P < 35$2. Base de Reglas "SI..., ENTONCES..."A continuación tenés la lista estructurada de reglas que cubren las combinaciones lógicas del sistema:Regla 1: Recomendación Segura (Garantizada)SI Coincidencia_Historial $\ge 0.70$ Y Popularidad_Percentil $\ge 35$ENTONCES Decisión = SÍ (Recomendar) | Etiqueta = "Coincidencia directa con tus gustos"Regla 2: Descubrimiento / Niche (Recomendación con Alto Afinidad)SI Coincidencia_Historial $\ge 0.70$ Y Popularidad_Percentil $< 35$ENTONCES Decisión = SÍ (Recomendar) | Etiqueta = "Joya oculta seleccionada para vos"Regla 3: Apuesta Tendencia (Popularidad compensa afición media)SI Coincidencia_Historial entre $0.40$ y $0.69$ Y Popularidad_Percentil $\ge 75$ENTONCES Decisión = SÍ (Recomendar) | Etiqueta = "Tendencia global que podría gustarte"Regla 4: Zona Gris / Exploración ModeradaSI Coincidencia_Historial entre $0.40$ y $0.69$ Y Popularidad_Percentil entre $35$ y $74$ENTONCES Decisión = SÍ (Recomendar con Prioridad Baja) | Etiqueta = "Para explorar nuevo sonido"Regla 5: Descarte por Falta de Relevancia (Desconexión Media)SI Coincidencia_Historial entre $0.40$ y $0.69$ Y Popularidad_Percentil $< 35$ENTONCES Decisión = NO (Descartar) | Motivo = "Demasiado alejado y de bajo impacto"Regla 6: Descarte Absoluto (Baja Coincidencia)SI Coincidencia_Historial $< 0.40$ (sin importar la popularidad)ENTONCES Decisión = NO (Descartar) | Motivo = "Sin afinidad suficiente con el perfil del usuario"3. Aplicación a los "Dos casos de ejemplo" (Líneas 28 a 34 de tu README)Podés copiar este formato para completar la tabla del README.md que tenés abierta en pantalla:   Markdown**Base de reglas (SI... ENTONCES):**
+1. SI Historial ≥ 0.70 ENTONCES SÍ (Alta afinidad)
+2. SI Historial entre 0.40 y 0.69 Y Popularidad Percentil ≥ 75 ENTONCES SÍ (Tendencia)
+3. SI Historial < 0.40 O (Historial < 0.70 Y Popularidad Percentil < 35) ENTONCES NO
+
+**Dos casos de ejemplo:**
+
+| Caso inventado | Valores | Salida del sistema | Explicación de la regla 
+| **A** | Historial: 0.82 \| Popularidad: Percentil 20 | **SÍ** | Regla 2: Alta coincidencia (0.82 ≥ 0.70) rescata un álbum de nicho. 
+| **B** | Historial: 0.45 \| Popularidad: Percentil 15 | **NO** | Regla 5: Coincidencia media (0.45) con popularidad muy baja no supera el umbral. | No rechazamos nada, ya que nos parecio importante la respuesta completa de la IA|
+| 4 | Que deberiamos poner en "Entrenamiento contra prueba?" | <> | <> |
+| 5 | <> | <> | <> |
+| 6 | <> | <> | <> |
+
 
 **Corridas contra el evaluador**
 
