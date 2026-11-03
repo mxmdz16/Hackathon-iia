@@ -17,7 +17,12 @@
 | Actuadores | Módulo de despliegue en la interfaz que renderiza la lista ordenada de álbumes recomendados, genera y muestra las etiquetas de explicabilidad (*"Porque escuchaste X"*) y actualiza la cola de reproducción del usuario. |
 | Sensores | Registro de eventos del usuario (interacciones de «pulgar arriba/abajo», clics, reproducciones completadas, saltos de canciones) y la API de metadatos (puntuaciones de factores latentes SVD, duración del álbum, género, año de lanzamiento). |
 
-**Objetivo y métrica.** La coincidencia exacta de atributos (Attribute Match Score), Como metrica utilizamos el $\text{Match Score} = \frac{\text{Numero de restricciones cumplidas}}{\text{Numero de restricciones aplicadas}}$. La metrica del sistema es el promedio del match score en todas las recomendaciones generadas. El objetivo es que $\hat{x}(\text{Match Score}) >= 0.90$. Para que la métrica lo mida directamente, la predicción del modelo (SÍ) debe coincidir con el comportamiento real del usuario (pulgar arriba / escucha efectiva). Si el usuario interactúa positivamente, la métrica sube; si lo ignora o le da pulgar abajo, se convierte en un error (Falso Positivo) que castiga el rendimiento del sistema.
+**Objetivo y métrica.** Para evaluar el rendimiento del recomendador, la métrica principal del sistema es la tasa de acierto directo (*Accuracy / Precision@1*), definida como el porcentaje de recomendaciones mostradas en las que el usuario efectúa una interacción positiva («pulgar arriba» o tiempo de escucha efectivo). 
+
+El **objetivo cuantitativo** del sistema es alcanzar una tasa de aciertos $\ge 0.90$ (90% de recomendaciones aceptadas).
+
+Complementariamente, se evalúa el cumplimiento de restricciones del usuario mediante el $\text{Match Score} = \frac{\text{Número de restricciones cumplidas}}{\text{Número de restricciones aplicadas}}$. Un $\text{Match Score} \ge 0.90$ garantiza el criterio sintáctico (coincidencia de atributos y metadatos), pero el éxito real del agente depende de la validación semántica (la respuesta positiva efectiva del usuario en la interfaz). Si la recomendación cumple con las restricciones sintácticas ($\text{Match Score} \ge 0.90$) pero el usuario le da «pulgar abajo» o la ignora, el caso se contabiliza como un **Falso Positivo (FP)**, penalizando la métrica de rendimiento del sistema por falta de afinidad real.
+
 
 ## 2. El sistema
 * Variable 1: Coincidencia con su historial ($H$) $\rightarrow$ Escala de $0.0$ a $1.0$ (SVD / Factorización).Alta: $H \ge 0.70$Media: $0.40 \le H < 0.70$Baja: $H < 0.40$
